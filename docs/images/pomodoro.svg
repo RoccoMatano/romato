@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 600 600">
+<g id="layer1" transform="translate(0,-452.36218)"><g id="g3762"
+transform="matrix(2.017586,0,0,2.017586,-304.30308,-749.10959)"><path
+id="path2982" d="m 258.82352,309.80392 c 0,38.98481 -31.16449,70.58824
+-69.60784,70.58824 -38.44335,0 -69.60784,-31.60343 -69.60784,-70.58824 0,
+-38.9848 31.16449,-70.58823 69.60784,-70.58823 38.44335,0 69.60784,31.60343
+69.60784,70.58823 z" style="fill:#ff1b00;fill-opacity:1;fill-rule:nonzero;
+stroke:#c52625;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;
+stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+transform="matrix(1.7809466,0,0,1.6173223,-35.022251,251.30938)"/><path
+id="path3752" d="m 326.78224,706.43943 -34.25345,-23.73478 -16.97988,33.57304
+-3.19411,-36.11552 -41.74906,14.15636 29.73629,-27.34028 -42.06223,-13.55292
+45.2476,-2.54945 -17.73591,-33.3231 34.25347,23.7348 16.97987,-33.57303 3.19411,
+36.11551 41.74908,-14.15636 -29.73631,27.34026 42.06223,13.55292 -45.24759,2.54947 z"
+style="fill:#177317;fill-opacity:1;fill-rule:nonzero;stroke:#44c764;
+stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;
+stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"/><path id="path3756"
+d="m 375.95926,681.45854 c 32.94358,5.82039 22.89048,49.12791 19.53148,44.08941
+0,0 -6.47105,-25.48099 -19.53148,-44.08941 z" style="fill:#ffffff;fill-opacity:1;
+stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;
+stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" /><path
+style="fill:#e30000;fill-opacity:0.57943923;stroke:#000000;stroke-width:0;
+stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;
+stroke-dasharray:none" d="m 212.75153,707.60157 c -18.61851,18.49496 -24.97486,
+41.7165 -17.61936,70.59796 3.84726,15.10629 9.52071,29.56291 22.77717,43.01602
+12.74292,12.93196 29.81761,19.47898 38.62071,24.15447 6.29976,3.34592 33.90995,
+6.11831 44.55055,3.49659 15.64276,-3.85418 27.15621,-7.72449 36.41052,-14.46968
+-35.06741,18.77055 -152.94876,-23.54294 -124.73959,-126.79536 z" id="path3758"/>
+</g></g></svg>
