@@ -299,6 +299,14 @@ void aligned_free(void *aligned)
 // a\\\b d"e f"g h      a\\\b       de fg       h
 // a\\\"b c d           a\"b        c           d
 // a\\\\"b c" d e       a\\b c      d           e
+// a"b"" c d            ab" c d
+//
+// In fact, contrary to what the above text suggests, the point is not that
+// arguments must be framed with double quotation marks. Rather, the quotation
+// marks switch the mode of the parser, which determines whether white space
+// is interpreted as an argument separator or not. e.g:
+//
+// "Ar"g"um"e"n"t" With Sp"aces"" -> single argument 'Argument With Spaces'
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -333,41 +341,47 @@ static void parse_cmdl(
         }
         ++argc;
 
-        // 2 * N backslashes + " -> N backslashes and begin/end quote
-        // 2 * N + 1 backslashes + " -> N backslashes + literal "
-        // N backslashes -> N backslashes
+        // - A string of backslashes not followed by a quotation mark has no
+        //   special meaning.
+        // - An even number of backslashes followed by a quotation mark is
+        //   treated as pairs of protected backslashes, followed by a word
+        //   terminator.
+        // - An odd number of backslashes followed by a quotation mark is
+        //   treated as pairs of protected backslashes, followed by a protected
+        //   quotation mark.
 
-        bool outside_quote = true;
+        bool space_terminates_arg = true;
         // loop over chars in argument
         for (;;)
         {
-            bool ignore = false;
-            int nbslash = 0;
+            int cnt_backslash = 0;
 
             while (*cmdl == BSLASHCHAR)
             {
                 ++cmdl;
-                ++nbslash;
+                ++cnt_backslash;
             }
 
+            bool ignore = false;
             if (*cmdl == QUOTECHAR)
             {
-                if (nbslash % 2 == 0)
+                if (cnt_backslash % 2 == 0)
                 {
-                    if (!outside_quote && cmdl[1] == QUOTECHAR)
+                    if (!space_terminates_arg && cmdl[1] == QUOTECHAR)
                     {
                         cmdl++;
                     }
                     else
                     {
+                        // toggle mode and ignore QUOTECHAR
+                        space_terminates_arg = !space_terminates_arg;
                         ignore = true;
-                        outside_quote = !outside_quote;
                     }
                 }
-                nbslash /= 2;
+                cnt_backslash /= 2;
             }
 
-            while (nbslash--)
+            while (cnt_backslash--)
             {
                 if (args)
                 {
@@ -376,7 +390,7 @@ static void parse_cmdl(
                 ++charc;
             }
 
-            if (*cmdl == NULCHAR || (outside_quote && IS_SPACE(cmdl)))
+            if (*cmdl == NULCHAR || (space_terminates_arg && IS_SPACE(cmdl)))
             {
                 // end of argument
                 break;
@@ -470,20 +484,21 @@ static int find_any(PCTSTR s, PCTSTR pool)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static int append_arg(PTSTR Arg, PTSTR cmdl)
+static int append_arg(PTSTR arg, PTSTR cmdl)
 {
     if (cmdl)
     {
         cmdl += sz_len(cmdl);
     }
 
-    const int len = sz_len(Arg);
-    if ((len == 0) || !find_any(Arg, TEXT(" \t\n\v\"")))
+    const int len = sz_len(arg);
+    // Args that are not empty and do not contain any of (space, tab, new line
+    // or quotation mark) do not need to be qouted.
+    if (!((len == 0) || find_any(arg, TEXT(" \t\n\""))))
     {
-        // no need to qoute
         if (cmdl)
         {
-            memcpy(cmdl, Arg, len * sizeof(TCHAR));
+            memcpy(cmdl, arg, len * sizeof(TCHAR));
             cmdl += len;
         }
         return len;
@@ -495,21 +510,21 @@ static int append_arg(PTSTR Arg, PTSTR cmdl)
         *cmdl++ = TEXT('"');
     }
     int res = 1;
-    while (*Arg)
+    while (*arg)
     {
-        int NumberBackslashes = 0;
-        while (*Arg == TEXT('\\'))
+        int cnt_backslash = 0;
+        while (*arg == TEXT('\\'))
         {
-            ++Arg;
-            ++NumberBackslashes;
+            ++arg;
+            ++cnt_backslash;
         }
 
-        if (*Arg == 0)
+        if (*arg == 0)
         {
-            // Escape all backslashes, but let the terminating
-            // double quotation mark we add below be interpreted
-            // as a metacharacter.
-            const int nbs = NumberBackslashes * 2;
+            // Add a pair of backslashes for each encountered backslash, so
+            // that the quotation mark we are going to add below will be
+            // interpreted as an argument terminator.
+            const int nbs = cnt_backslash * 2;
             if (cmdl)
             {
                 for (int i = 0; i < nbs; i++)
@@ -520,38 +535,38 @@ static int append_arg(PTSTR Arg, PTSTR cmdl)
             res += nbs;
             break;
         }
-        else if (*Arg == TEXT('"'))
+        else if (*arg == TEXT('"'))
         {
-            // Escape all backslashes and the following
-            // double quotation mark.
-
-            const int nbs = NumberBackslashes * 2 + 1;
+            // Escape all backslashes and the following double quotation mark
+            // (so that there is an odd number of backslashes).
+            const int nbs = cnt_backslash * 2 + 1;
             if (cmdl)
             {
                 for (int i = 0; i < nbs; i++)
                 {
                     *cmdl++ = TEXT('\\');
                 }
-                *cmdl++ = *Arg;
+                *cmdl++ = *arg;
             }
             res += nbs + 1;
         }
         else
         {
-            // Backslashes aren't special here.
-
-            const int nbs = NumberBackslashes;
+            // If we are not at the end of an argument and are not processing
+            // a quotation mark, then we simply copy the backslashes to the
+            // output.
+            const int nbs = cnt_backslash;
             if (cmdl)
             {
                 for (int i = 0; i < nbs; i++)
                 {
                     *cmdl++ = TEXT('\\');
                 }
-                *cmdl++ = *Arg;
+                *cmdl++ = *arg;
             }
             res += nbs + 1;
         }
-        ++Arg;
+        ++arg;
     }
     if (cmdl)
     {
