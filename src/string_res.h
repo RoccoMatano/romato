@@ -41,19 +41,19 @@ inline StringResourceEntry* FindStringResource(
     // This code deliberately ignores 16 bit semantics for resources.
     // I.e. there is no call to LockResource, UnlockResource or FreeResource.
 
-    HGLOBAL h_glob = LoadResource(
-        h_inst,
-        FindResourceEx(
+    WORD* p_tmp = static_cast<WORD*>(
+        LoadResource(
             h_inst,
-            RT_STRING,
-            MAKEINTRESOURCE(str_id / 16 + 1),
-            static_cast<WORD>(lang_id)
+            FindResourceEx(
+                h_inst,
+                RT_STRING,
+                MAKEINTRESOURCE(str_id / 16 + 1),
+                static_cast<WORD>(lang_id)
+                )
             )
         );
-    WORD* p_tmp = nullptr;
-    if (h_glob != nullptr)
+    if (p_tmp != nullptr)
     {
-        p_tmp = static_cast<WORD*>(h_glob);
         for (UINT i = 0; i < (str_id & 15); i++)
         {
             p_tmp += (1 + *p_tmp);
