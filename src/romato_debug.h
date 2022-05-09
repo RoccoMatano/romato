@@ -74,18 +74,20 @@ void DbgDump(const void* data, size_t len);
 
 //////////////////////////////////////////////////////////////////////////////
 
-
-#if DEF_NON_NULL(ROMATO_ACTIVATE_ASSERTS)
 #ifdef _MSC_VER
 #define DEBUG_BREAK __debugbreak
 #else
 #error unknown compiler
 #endif
-#define ASSERT(e) for(;;) { if (!(e)) { \
-DbgPrintf("%s(%d): ASSERT FAILED: '%s'\n", __FILE__, __LINE__, #e); \
-DEBUG_BREAK(); } \
-break; \
-}
+
+//////////////////////////////////////////////////////////////////////////////
+
+#if DEF_NON_NULL(ROMATO_ACTIVATE_ASSERTS)
+    #define ASSERT(e) for(;;) { if (!(e)) { \
+    DbgPrintf("%s(%d): ASSERT FAILED: '%s'\n", __FILE__, __LINE__, #e); \
+    DEBUG_BREAK(); } \
+    break; \
+    }
 #else
 #define ASSERT(e)
 #endif
