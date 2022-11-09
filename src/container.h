@@ -218,7 +218,7 @@ public:
     pointer m_ptr;
 };
 
-template <class T> inline typename array_const_iterator<T>
+template <class T> inline array_const_iterator<T>
 operator+(ptrdiff_t offs, array_const_iterator<T> next)
 {
     return next += offs;
@@ -314,7 +314,7 @@ public:
     }
 };
 
-template <class T> inline typename array_iterator<T>
+template <class T> inline array_iterator<T>
 operator+(ptrdiff_t offs, array_iterator<T> next)
 {
     return next += offs;
