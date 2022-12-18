@@ -162,6 +162,6 @@ public:
     template <class O>
     HRESULT QueryInterface(O** pp) const
     {
-        return ptr->QueryInterface(__uuidof(O), static_cast<void**>(pp));
+        return ptr->QueryInterface(__uuidof(O), reinterpret_cast<void**>(pp));
     }
 };
