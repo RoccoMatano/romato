@@ -2,7 +2,7 @@
 //
 // This file is part of the romato library.
 //
-// Copyright 2013-2022 Rocco Matano
+// Copyright 2013-2023 Rocco Matano
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
