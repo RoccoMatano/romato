@@ -121,4 +121,12 @@ template <class P> P align_ptr(const void* ptr)
     return reinterpret_cast<P>(aligned);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// add an offset to a base ptr and convert the sum to another pointer type
+template <class P> P ptroffs(void* ptr, size_t offs)
+{
+    return reinterpret_cast<P>(reinterpret_cast<char*>(ptr) + offs);
+}
+
 #endif //  __cplusplus
