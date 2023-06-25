@@ -364,7 +364,7 @@ extern "C" int inline sz_cmpiW(PCWSTR a, PCWSTR b)
     return (
         CompareStringW(
             LOCALE_USER_DEFAULT,
-            NORM_IGNORECASE,
+            SORT_STRINGSORT | NORM_IGNORECASE,
             a,
             -1,
             b,
@@ -379,7 +379,7 @@ extern "C" int inline sz_cmpiA(PCSTR a, PCSTR b)
     return (
         CompareStringA(
             LOCALE_USER_DEFAULT,
-            NORM_IGNORECASE,
+            SORT_STRINGSORT | NORM_IGNORECASE,
             a,
             -1,
             b,

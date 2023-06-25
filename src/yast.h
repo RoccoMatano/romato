@@ -570,7 +570,7 @@ public:
     {
         return CompareStringW(
             LOCALE_USER_DEFAULT,
-            0,
+            SORT_STRINGSORT,
             a.m_str,
             a.length(),
             b.m_str,
