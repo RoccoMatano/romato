@@ -148,61 +148,6 @@ NORETURN extern "C" int _purecall()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DbgDump(const void* data, size_t len)
-{
-    const int bytes_per_line = 16;
-    const int line_buf_size = 22 + bytes_per_line * 4;
-    const int first_printable = 32; // ' ' (space)
-    const int last_printable = 127; // '~'
-    char line_buf[line_buf_size];
-
-    wsprintfA(line_buf, "Dump of %p, length %Iu\n", data, len);
-    OutputDebugStringA(line_buf);
-
-    const uint8_t * const start = reinterpret_cast<const uint8_t*>(data);
-    const uint8_t * const end = start + len;
-    const uint8_t *chunk = start;
-    while (len)
-    {
-        char *out = line_buf;
-        out += wsprintfA(out, "%08Ix: ", chunk - start);
-        for (int i = 0; i < bytes_per_line; i++)
-        {
-            if (chunk + i < end)
-            {
-                out += wsprintfA(out, "%02x", chunk[i]);
-            }
-            else
-            {
-                *out++ = ' ';
-                *out++ = ' ';
-            }
-            *out++ = (i == (bytes_per_line / 2 - 1)) ? '|' : ' ';
-        }
-        *out++ = '|';
-        *out++ = ' ';
-        for (int i = 0; i < bytes_per_line; i++)
-        {
-            uint8_t c = ' ';
-            if (chunk + i < end)
-            {
-                c = chunk[i];
-                if (c < first_printable || c > last_printable)
-                {
-                    c = '.';
-                }
-            }
-            *out++ = c;
-        }
-        chunk += bytes_per_line;
-        len = (len > bytes_per_line) ? len - bytes_per_line : 0;
-        *out = '\n';
-        OutputDebugStringA(line_buf);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 extern "C" const int _fltused = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -662,17 +607,143 @@ NEVERINLINE HINSTANCE GetCallerHinstance()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+extern "C" int sz_vnprintfA(PSTR buf, UINT size, PCSTR fmt, va_list args)
+{
+    int res = _vsnprintf(buf, size, fmt, args);
+    if (res >= 0)
+    {
+        return res;
+    }
+    if (size)
+    {
+        buf[size - 1] = 0;
+    }
+    return _vsnprintf(nullptr, 0, fmt, args);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+extern "C" int sz_nprintfA(PSTR buf, UINT size, PCSTR fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int res = sz_vnprintfA(buf, size, fmt, args);
+    va_end(args);
+    return res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+extern "C" int sz_vnprintfW(PWSTR buf, UINT size, PCWSTR fmt, va_list args)
+{
+    int res = _vsnwprintf(buf, size, fmt, args);
+    if (res >= 0)
+    {
+        return res;
+    }
+    if (size)
+    {
+        buf[size - 1] = 0;
+    }
+    return _vsnwprintf(nullptr, 0, fmt, args);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+extern "C" int sz_nprintfW(PWSTR buf, UINT size, PCWSTR fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int res = sz_vnprintfW(buf, size, fmt, args);
+    va_end(args);
+    return res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DbgPrintf(const char* fmt, ...)
+{
+    va_list argptr;
+    char buffer[1024];
+
+    va_start(argptr, fmt);
+    sz_vnprintfA(buffer, sizeof(buffer), fmt, argptr);
+    va_end(argptr);
+    OutputDebugStringA(buffer);
+}
+////////////////////////////////////////////////////////////////////////////////
+
+void DbgDump(const void* data, size_t len)
+{
+    const int bytes_per_line = 16;
+    const int line_buf_size = 22 + bytes_per_line * 4;
+    const int first_printable = 32; // ' ' (space)
+    const int last_printable = 127; // '~'
+    char line_buf[line_buf_size];
+
+    DbgPrintf("Dump of %p, length %zu (%#zx)\n", data, len, len);
+
+    const uint8_t * const start = reinterpret_cast<const uint8_t*>(data);
+    const uint8_t * const end = start + len;
+    const uint8_t *chunk = start;
+    while (len)
+    {
+        char *out = (
+            line_buf +
+            sz_nprintfA(line_buf, sizeof(line_buf), "%08tx: ", chunk - start)
+            );
+        for (int i = 0; i < bytes_per_line; i++)
+        {
+            if (chunk + i < end)
+            {
+                uint32_t n = (chunk[i] >> 4) & 0x0f;
+                *out++ = static_cast<char>(n + (n > 9 ? 'a' : '0'));
+                n = chunk[i] & 0x0f;
+                *out++ = static_cast<char>(n + (n > 9 ? 'a' : '0'));
+            }
+            else
+            {
+                *out++ = ' ';
+                *out++ = ' ';
+            }
+            *out++ = (i == (bytes_per_line / 2 - 1)) ? '|' : ' ';
+        }
+        *out++ = '|';
+        *out++ = ' ';
+        for (int i = 0; i < bytes_per_line; i++)
+        {
+            uint8_t c = ' ';
+            if (chunk + i < end)
+            {
+                c = chunk[i];
+                if (c < first_printable || c > last_printable)
+                {
+                    c = '.';
+                }
+            }
+            *out++ = c;
+        }
+        chunk += bytes_per_line;
+        len = (len > bytes_per_line) ? len - bytes_per_line : 0;
+        *out = '\n';
+        OutputDebugStringA(line_buf);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 #if defined(ROMATO_INCLUDE_SIMPLE_PRINTF) && ROMATO_INCLUDE_SIMPLE_PRINTF
 
 extern "C" int printf(const char *fmt, ...)
 {
-    char Buffer[1025];
-    va_list argptr;
-    va_start(argptr, fmt);
-    DWORD cnt = wvsprintfA(Buffer, fmt, argptr);
-    va_end(argptr);
+    char buf[1025];
+    va_list args;
+    va_start(args, fmt);
+    int res = sz_vnprintfA(buf, sizeof(buf), fmt, args);
+    va_end(args);
+    DWORD cnt = res < sizeof(buf) ? res : sizeof(buf) - 1;
     return (
-        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), Buffer, cnt, &cnt, NULL) ?
+        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), buf, cnt, &cnt, NULL) ?
         cnt :
         0
         );

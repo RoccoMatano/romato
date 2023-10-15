@@ -48,18 +48,7 @@ inline void DbgPuts(const char* str)
 {
     OutputDebugStringA(str);
 }
-
-inline void DbgPrintf(const char* fmt, ...)
-{
-    va_list argptr;
-    char buffer[1024];
-
-    va_start(argptr, fmt);
-    wvsprintfA(buffer, fmt, argptr);
-    va_end(argptr);
-    OutputDebugStringA(buffer);
-}
-
+void DbgPrintf(const char* fmt, ...);
 void DbgDump(const void* data, size_t len);
 
 //////////////////////////////////////////////////////////////////////////////

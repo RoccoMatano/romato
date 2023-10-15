@@ -104,16 +104,13 @@ Yast::Yast(HWND hWnd)
 
 Yast& Yast::format(PCSTR fmt, ...)
 {
-    char buffer[1026];
-    buffer[0] = 0;
-
-    va_list argptr;
-    va_start(argptr, fmt);
-    const UINT len = wvsprintfA(buffer, fmt, argptr);
-    va_end(argptr);
-
-    release(m_str);
-    m_str = from_char(buffer, len, CP_ACP);
+    va_list args;
+    va_start(args, fmt);
+    UINT needed = sz_vnprintfA(nullptr, 0, fmt, args);
+    PSTR y = reinterpret_cast<PSTR>(allocate_bytes(nullptr, needed));
+    sz_vnprintfA(y, needed + 1, fmt, args);
+    m_str = from_char(y, needed, CP_ACP);
+    release(reinterpret_cast<YSTR>(y));
     return *this;
 }
 
@@ -121,15 +118,12 @@ Yast& Yast::format(PCSTR fmt, ...)
 
 Yast& Yast::format(PCWSTR fmt, ...)
 {
-    WCHAR buffer[1026];
-    buffer[0] = 0;
-
-    va_list argptr;
-    va_start(argptr, fmt);
-    const UINT len = wvsprintfW(buffer, fmt, argptr);
-    va_end(argptr);
-
-    copy_from(buffer, len);
+    va_list args;
+    va_start(args, fmt);
+    UINT needed = sz_vnprintfW(nullptr, 0, fmt, args);
+    release(m_str);
+    m_str = allocate(nullptr, needed);
+    sz_vnprintfW(m_str, needed + 1, fmt, args);
     return *this;
 }
 

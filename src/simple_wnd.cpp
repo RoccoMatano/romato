@@ -87,7 +87,7 @@ void SimpleWnd::Create(WND_CREATE& wc)
             hash ^= static_cast<uint32_t>(bytes[u]);
             hash *= 16777619U;
         }
-        wsprintf(cname, L"rml:%x", hash);
+        SZ_PRINTF(cname, L"rml:%x", hash);
         wc.lpszClassName = cname;
     }
 

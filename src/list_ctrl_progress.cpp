@@ -145,7 +145,7 @@ LRESULT ListCtrlProgress::OnCustomDraw(NMLVCUSTOMDRAW* pLVCD)
     if (percent > 0)
     {
         TCHAR txt[8];
-        wsprintf(txt, TEXT("%d%%"), percent);
+        SZ_PRINTF(txt, TEXT("%d%%"), percent);
         RECT left, right, trc;
         left.left = rect.left + 1;
         left.top = rect.top + 1;

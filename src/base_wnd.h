@@ -551,7 +551,7 @@ inline bool TrayMessage(
     if (p_tip)
     {
         tnd.uFlags |= NIF_TIP;
-        sz_cpyn(tnd.szTip, p_tip, ARRAYSIZE(tnd.szTip));
+        sz_cpyn(tnd.szTip, p_tip, ARRAY_SIZE(tnd.szTip));
     }
 
     const bool res = (Shell_NotifyIcon(tray_msg, &tnd) != 0);

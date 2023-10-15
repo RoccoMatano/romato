@@ -396,3 +396,22 @@ extern "C" int inline sz_cmpiA(PCSTR a, PCSTR b)
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
+
+extern "C" int sz_vnprintfA(PSTR buf, UINT size, PCSTR fmt, va_list args);
+extern "C" int sz_vnprintfW(PWSTR buf, UINT size, PCWSTR fmt, va_list args);
+extern "C" int sz_nprintfA(PSTR buf, UINT size, PCSTR fmt, ...);
+extern "C" int sz_nprintfW(PWSTR buf, UINT size, PCWSTR fmt, ...);
+
+#ifdef UNICODE
+#define sz_vnprintf sz_vnprintfW
+#define sz_nprintf sz_nprintfW
+#define SZ_PRINTF(buf, ...) sz_nprintfW(buf, ARRAY_SIZE(buf), __VA_ARGS__)
+#else
+#define sz_vnprintf sz_vnprintfA
+#define sz_nprintf sz_nprintfA
+#define SZ_PRINTF(buf, ...) sz_nprintfA(buf, ARRAY_SIZE(buf), __VA_ARGS__)
+#endif
+
+#define SZ_PRINTFA(buf, ...) sz_nprintfA(buf, ARRAY_SIZE(buf), __VA_ARGS__)
+
+////////////////////////////////////////////////////////////////////////////////

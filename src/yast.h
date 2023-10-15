@@ -472,8 +472,8 @@ public:
         return slice(begin, begin + length);
     }
 
-    // These are restricted to the capabilities of wsprintf (e.g. no support
-    // for floating point).
+    // These are restricted to the capabilities of ntdll's _vsnprintf (e.g.
+    // no support for floating point).
     Yast& format(PCSTR fmt, ...);
     Yast& format(PCWSTR fmt, ...);
 
