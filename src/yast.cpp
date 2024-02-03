@@ -109,6 +109,7 @@ Yast& Yast::format(PCSTR fmt, ...)
     UINT needed = sz_vnprintfA(nullptr, 0, fmt, args);
     PSTR y = reinterpret_cast<PSTR>(allocate_bytes(nullptr, needed));
     sz_vnprintfA(y, needed + 1, fmt, args);
+    va_end(args);
     m_str = from_char(y, needed, CP_ACP);
     release(reinterpret_cast<YSTR>(y));
     return *this;
@@ -124,6 +125,7 @@ Yast& Yast::format(PCWSTR fmt, ...)
     release(m_str);
     m_str = allocate(nullptr, needed);
     sz_vnprintfW(m_str, needed + 1, fmt, args);
+    va_end(args);
     return *this;
 }
 
