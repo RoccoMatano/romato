@@ -59,7 +59,7 @@ Yast::YSTR Yast::allocate_bytes(const void* str, UINT length)
     // Write CHAR terminator.
     *(res + length) = 0;
     // Also write WCHAR terminator, taking alignment into account. The way
-    // alloc_len is calculated ensures, that we no NOT overflow our buffer.
+    // alloc_len is calculated ensures, that we do NOT overflow our buffer.
     *(p2p<PWSTR>(res + (~1 & (length + 1)))) = 0;
 
     return p2p<YSTR>(res);
