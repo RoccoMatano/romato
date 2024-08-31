@@ -154,13 +154,17 @@ extern "C" const int _fltused = 0;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef STATUS_NO_MEMORY
+#define STATUS_NO_MEMORY ((DWORD)0xC0000017L)
+#endif
+
 void* aligned_malloc(size_t size, size_t align)
 {
     const size_t PTR_SIZE = sizeof(void *);
 
     if (!IS_POW_2(align))
     {
-        return nullptr;
+        RaiseException(STATUS_NO_MEMORY);
     }
 
     align = (align > PTR_SIZE ? align : PTR_SIZE) - 1;
@@ -168,13 +172,13 @@ void* aligned_malloc(size_t size, size_t align)
     size_t malloc_size = PTR_SIZE + align + size;
     if (malloc_size <= size)
     {
-        return nullptr;
+        RaiseException(STATUS_NO_MEMORY);
     }
 
     uintptr_t alloc = p2i<uintptr_t>(malloc(malloc_size));
     if (!alloc)
     {
-        return nullptr;
+        RaiseException(STATUS_NO_MEMORY);
     }
 
     uintptr_t aligned = (alloc + PTR_SIZE + align) & ~align;
@@ -725,7 +729,8 @@ void DbgDump(const void* data, size_t len)
         }
         chunk += bytes_per_line;
         len = (len > bytes_per_line) ? len - bytes_per_line : 0;
-        *out = '\n';
+        *out++ = '\n';
+        *out = '\0';
         OutputDebugStringA(line_buf);
     }
 }
