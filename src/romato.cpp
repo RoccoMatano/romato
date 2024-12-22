@@ -701,9 +701,9 @@ void DbgDump(const void* data, size_t len)
             if (chunk + i < end)
             {
                 uint32_t n = (chunk[i] >> 4) & 0x0f;
-                *out++ = static_cast<char>(n + (n > 9 ? 'a' : '0'));
+                *out++ = static_cast<char>(n + (n > 9 ? 'a' - 10 : '0'));
                 n = chunk[i] & 0x0f;
-                *out++ = static_cast<char>(n + (n > 9 ? 'a' : '0'));
+                *out++ = static_cast<char>(n + (n > 9 ? 'a' - 10 : '0'));
             }
             else
             {
