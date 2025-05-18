@@ -2,7 +2,7 @@
 //
 // This file is part of the romato library.
 //
-// Copyright 2013-2023 Rocco Matano
+// Copyright 2013-2025 Rocco Matano
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -248,16 +248,16 @@ extern "C" PSTR inline sz_ncatA(PSTR dst, PCSTR src, UINT size_dst)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T> inline T* sz_strT(T* searchee, const T* lookfor)
+template<typename T> inline T* sz_strT(const T* searchee, const T* lookfor)
 {
     if (!*lookfor)
     {
-        return searchee;
+        return const_cast<T*>(searchee);
     }
 
     while (*searchee)
     {
-        T* s = searchee;
+        const T* s = searchee;
         const T* l = lookfor;
 
         while (*s && *l && (*s - *l) == 0)
@@ -268,7 +268,7 @@ template<typename T> inline T* sz_strT(T* searchee, const T* lookfor)
 
         if (!*l)
         {
-            return searchee;
+            return const_cast<T*>(searchee);
         }
         searchee++;
     }
@@ -276,12 +276,12 @@ template<typename T> inline T* sz_strT(T* searchee, const T* lookfor)
     return nullptr;
 }
 
-extern "C" inline PWSTR sz_strW(PWSTR searchee, PCWSTR lookfor)
+extern "C" inline PWSTR sz_strW(PCWSTR searchee, PCWSTR lookfor)
 {
     return sz_strT<WCHAR>(searchee, lookfor);
 }
 
-extern "C" inline PSTR sz_strA(PSTR searchee, PCSTR lookfor)
+extern "C" inline PSTR sz_strA(PCSTR searchee, PCSTR lookfor)
 {
     return sz_strT<CHAR>(searchee, lookfor);
 }
@@ -309,7 +309,7 @@ extern "C" inline PWSTR sz_chrW(PCWSTR searchee, int ch)
     return sz_chrT<WCHAR>(searchee, ch);
 }
 
-extern "C" inline PSTR sz_chrA(PSTR searchee, int ch)
+extern "C" inline PSTR sz_chrA(PCSTR searchee, int ch)
 {
     return sz_chrT<CHAR>(searchee, ch);
 }
