@@ -31,19 +31,17 @@
 
 LRESULT ListCtrlDropFiles::WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-    ListCtrlDropFiles* self = i2p<ListCtrlDropFiles*>(
-        GetWindowLongPtrW(hWnd, GWLP_USERDATA)
-        );
+    auto self = i2p<ListCtrlDropFiles*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
     if (self != nullptr)
     {
         if (msg == WM_DROPFILES && self->m_pCallback)
         {
-            HDROP const drop_info = i2p<HDROP>(wp);
+            auto const drop_info = i2p<HDROP>(wp);
             Yast filename;
-            const UINT cnt = DragQueryFileW(drop_info, ~0U, nullptr, 0);
+            auto const cnt = DragQueryFileW(drop_info, ~0U, nullptr, 0);
             for (UINT n = 0 ; n < cnt; n++)
             {
-                UINT len = DragQueryFileW(drop_info, n, nullptr, 0);
+                auto len = DragQueryFileW(drop_info, n, nullptr, 0);
                 filename.clear(len);
                 DragQueryFileW(drop_info, n, filename, len + 1);
                 self->m_pCallback(self->m_pCtxt, filename);

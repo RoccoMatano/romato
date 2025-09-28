@@ -376,10 +376,10 @@ int cmdl_to_argv(PTSTR cmdl, PTSTR** ppargv)
 
     // alloc buffer and parse again
     DWORD numbytes = argc * sizeof(PTSTR) + nchars * sizeof(TCHAR);
-    PTSTR *pargv = static_cast<PTSTR*>(malloc(numbytes));
+    auto pargv = static_cast<PTSTR*>(malloc(numbytes));
     if (pargv)
     {
-        PTSTR args = p2p<PTSTR>(&pargv[argc]);
+        auto args = p2p<PTSTR>(&pargv[argc]);
         parse_cmdl(cmdl, pargv, args, &argc, &nchars);
         *ppargv = pargv;
     }
@@ -396,7 +396,7 @@ int cmdl_to_argv(PTSTR cmdl, PTSTR** ppargv)
 int get_argv(PTSTR** ppargv)
 {
     TCHAR prog_name[MAX_PATH + 1];
-    PTSTR cmdl = GetCommandLine();
+    auto cmdl = GetCommandLine();
     if (cmdl == 0 || *cmdl == NULCHAR)
     {
         GetModuleFileName(nullptr, prog_name, MAX_PATH);
@@ -420,7 +420,7 @@ static int find_any(PCTSTR s, PCTSTR pool)
 {
     while (*s)
     {
-        PCTSTR p = pool;
+        auto p = pool;
         while (*p && *p != *s)
         {
             ++p;
@@ -539,7 +539,7 @@ PTSTR argv_to_cmdl(int argc, PTSTR argv[])
     {
         size += append_arg(argv[i], nullptr);
     }
-    PTSTR cmdl = static_cast<PTSTR>(malloc(size * sizeof(TCHAR)));
+    auto cmdl = static_cast<PTSTR>(malloc(size * sizeof(TCHAR)));
     *cmdl = 0;
     size = 0;
     for (int i = 0; i < argc; i++)
@@ -572,7 +572,7 @@ PSTR* CommandLineToArgvA(PCWSTR CmdLine, int *pNumArgs)
     {
         const UINT slen = sz_lenW(argv[i]) + 1;
         const UINT blen = slen * sizeof(WCHAR);
-        PWSTR const tmp = static_cast<PWSTR>(malloc(blen));
+        auto const tmp = static_cast<PWSTR>(malloc(blen));
         memcpy(tmp, argv[i], blen);
         WideCharToMultiByte(
             CP_ACP,
@@ -594,7 +594,7 @@ PSTR* CommandLineToArgvA(PCWSTR CmdLine, int *pNumArgs)
 NEVERINLINE HINSTANCE GetCallerHinstance()
 {
 #if defined(_MSC_VER)
-    PCWSTR name = p2p<PCWSTR>(_ReturnAddress());
+    auto name = p2p<PCWSTR>(_ReturnAddress());
 #else
 #error unknown compiler
 #endif
@@ -687,12 +687,12 @@ void DbgDump(const void* data, size_t len)
 
     DbgPrintf("Dump of %p, length %zu (%#zx)\n", data, len, len);
 
-    const uint8_t * const start = reinterpret_cast<const uint8_t*>(data);
-    const uint8_t * const end = start + len;
-    const uint8_t *chunk = start;
+    auto const start = reinterpret_cast<const uint8_t*>(data);
+    auto const end = start + len;
+    auto *chunk = start;
     while (len)
     {
-        char *out = (
+        auto out = (
             line_buf +
             sz_nprintfA(line_buf, sizeof(line_buf), "%08tx: ", chunk - start)
             );

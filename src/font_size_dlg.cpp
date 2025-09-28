@@ -87,14 +87,14 @@ static DLGTEMPLATE* LoadDlgFontSize(
     HINSTANCE hinst
     )
 {
-    HRSRC hres = FindResource(hinst, TmplName, RT_DIALOG);
-    DWORD len  = SizeofResource(hinst, hres);
-    void *data = static_cast<void*>(LoadResource(hinst, hres));
+    auto hres = FindResource(hinst, TmplName, RT_DIALOG);
+    auto len  = SizeofResource(hinst, hres);
+    auto data = static_cast<void*>(LoadResource(hinst, hres));
     if (data == nullptr)
     {
         RaiseException(HRESULT_FROM_WIN32(GetLastError()));
     }
-    DLGTEMPLATE *pDlg = static_cast<DLGTEMPLATE*>(malloc(len));
+    auto pDlg = static_cast<DLGTEMPLATE*>(malloc(len));
     memcpy(pDlg, data, len);
 
     if (FontSize == 0)
@@ -104,7 +104,7 @@ static DLGTEMPLATE* LoadDlgFontSize(
 
     DWORD style;
     PWORD pWord;
-    DLGTEMPLATEEX *pExDlg = p2p<DLGTEMPLATEEX*>(pDlg);
+    auto pExDlg = p2p<DLGTEMPLATEEX*>(pDlg);
     if (pExDlg->signature != 0xFFFF)
     {
         // A regular DLGTEMPLATE
@@ -168,8 +168,8 @@ void FontSizeDlg::CreateSizedModeless(
     HINSTANCE hinst
     )
 {
-    DLGTEMPLATE *pTmpl = LoadDlgFontSize(FontSize, TmplName, hinst);
-    const HWND hwnd = CreateDialogIndirectParam(
+    auto pTmpl = LoadDlgFontSize(FontSize, TmplName, hinst);
+    auto hwnd = CreateDialogIndirectParam(
         hinst,
         pTmpl,
         m_pParent ? m_pParent->m_hWnd : nullptr,
@@ -191,8 +191,8 @@ INT_PTR FontSizeDlg::DoSizedModal(
     HINSTANCE hinst
     )
 {
-    DLGTEMPLATE *pTmpl = LoadDlgFontSize(FontSize, TmplName, hinst);
-    INT_PTR res = DialogBoxIndirectParam(
+    auto pTmpl = LoadDlgFontSize(FontSize, TmplName, hinst);
+    auto res = DialogBoxIndirectParam(
         hinst,
         pTmpl,
         m_pParent ? m_pParent->m_hWnd : nullptr,

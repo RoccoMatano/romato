@@ -43,14 +43,14 @@ Yast::YSTR Yast::allocate_bytes(const void* str, UINT length)
     const UINT alloc_len = (length + add_len) & ~mask;
 
     // Allocate memory and store length.
-    PSTR p = static_cast<PSTR>(malloc(alloc_len));
-    uint32_t *p_length = p2p<uint32_t*>(
+    auto p = static_cast<PSTR>(malloc(alloc_len));
+    auto p_length = p2p<uint32_t*>(
         p + sizeof(uintptr_t) - sizeof(uint32_t)
         );
     *p_length = length;
 
     // Copy init data.
-    PSTR res = p + sizeof(uintptr_t);
+    auto res = p + sizeof(uintptr_t);
     if (str)
     {
         memcpy(res, str, length);
@@ -92,7 +92,7 @@ Yast::YSTR Yast::from_char(PCSTR p_str, int length, UINT code_page)
 Yast::Yast(HWND hWnd)
 {
     // Length excluding terminating null character.
-    const UINT len = static_cast<UINT>(
+    auto len = static_cast<UINT>(
         SendMessageW(hWnd, WM_GETTEXTLENGTH, 0, 0)
         );
     m_str = allocate(nullptr, len);
@@ -107,7 +107,7 @@ Yast& Yast::format(PCSTR fmt, ...)
     va_list args;
     va_start(args, fmt);
     UINT needed = sz_vnprintfA(nullptr, 0, fmt, args);
-    PSTR y = reinterpret_cast<PSTR>(allocate_bytes(nullptr, needed));
+    auto y = reinterpret_cast<PSTR>(allocate_bytes(nullptr, needed));
     sz_vnprintfA(y, needed + 1, fmt, args);
     va_end(args);
     m_str = from_char(y, needed, CP_ACP);
@@ -390,18 +390,14 @@ Yast& Yast::reverse()
 size_t Yast::hash() const
 {
     // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
-    constexpr size_t prime = (
-        sizeof(size_t) == 8 ? 1099511628211ULL : 16777619U
-        );
-    constexpr size_t offset = (
-        sizeof(size_t) == 8 ? 14695981039346656037ULL : 2166136261U
-        );
-    const BYTE* const bytes = p2p<const BYTE*>(m_str);
+    const UINT prime = 16777619U;
+    const UINT offset = 2166136261U;
+    auto const bytes = p2p<const BYTE*>(m_str);
     const UINT blen = byte_length();
-    size_t mince = offset;
+    UINT mince = offset;
     for (UINT u = 0; u < blen; u++)
     {
-        mince ^= static_cast<size_t>(bytes[u]);
+        mince ^= static_cast<UINT>(bytes[u]);
         mince *= prime;
     }
     return mince;

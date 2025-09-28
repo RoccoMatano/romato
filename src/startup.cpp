@@ -102,7 +102,7 @@ static EXIT_ENTRY ExitList; // list head
 
 extern "C" int atexit(void(__cdecl* func)(void))
 {
-    EXIT_ENTRY* pEE = static_cast<EXIT_ENTRY*>(malloc(sizeof(EXIT_ENTRY)));
+    auto pEE = static_cast<EXIT_ENTRY*>(malloc(sizeof(EXIT_ENTRY)));
     if (!pEE)
     {
         return 0;

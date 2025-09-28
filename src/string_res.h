@@ -41,7 +41,7 @@ inline StringResourceEntry* FindStringResource(
     // This code deliberately ignores 16 bit semantics for resources.
     // I.e. there is no call to LockResource, UnlockResource or FreeResource.
 
-    WORD* p_tmp = static_cast<WORD*>(
+    auto p_tmp = static_cast<WORD*>(
         LoadResource(
             h_inst,
             FindResourceEx(

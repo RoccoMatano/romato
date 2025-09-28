@@ -43,7 +43,7 @@ LRESULT ListCtrlProgress::HandleReflectedNotify(NMHDR* pNMHDR)
 
 void ListCtrlProgress::SetProgress(int idx, int col_idx, int percent)
 {
-    ItemProgress* pid = GetPrivateItemData(idx);
+    auto pid = GetPrivateItemData(idx);
     if (!pid)
     {
         return;
@@ -106,7 +106,7 @@ LRESULT ListCtrlProgress::OnCustomDraw(NMLVCUSTOMDRAW* pLVCD)
     int idx = static_cast<int>(pLVCD->nmcd.dwItemSpec);
     int col = pLVCD->iSubItem;
 
-    ItemProgress* pid = i2p<ItemProgress*>(pLVCD->nmcd.lItemlParam);
+    auto pid = i2p<ItemProgress*>(pLVCD->nmcd.lItemlParam);
     if (!pid || pid->PercentColumn != col || !pid->ShowProgress)
     {
         return CDRF_DODEFAULT;

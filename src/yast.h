@@ -119,13 +119,13 @@ public:
 
     UINT byte_length() const
     {
-        uint32_t *p_length = reinterpret_cast<uint32_t*>(m_str) - 1;
+        auto p_length = reinterpret_cast<uint32_t*>(m_str) - 1;
         return *p_length;
     }
 
     UINT length() const
     {
-        uint32_t *p_length = reinterpret_cast<uint32_t*>(m_str) - 1;
+        auto p_length = reinterpret_cast<uint32_t*>(m_str) - 1;
         return *p_length / sizeof(WCHAR);
     }
 

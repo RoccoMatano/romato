@@ -70,7 +70,7 @@
 
 extern "C" void* memset(void* dst, int val, size_t count)
 {
-    unsigned char* cdst = static_cast<unsigned char*>(dst);
+    auto cdst = static_cast<unsigned char*>(dst);
     __stosb(cdst, static_cast<unsigned char>(val), count);
     return dst;
 }
@@ -79,7 +79,7 @@ extern "C" void* memset(void* dst, int val, size_t count)
 
 extern "C" void* memcpy(void* dst, const void* src, size_t count)
 {
-    unsigned char* cdst = static_cast<unsigned char*>(dst);
+    auto cdst = static_cast<unsigned char*>(dst);
     const unsigned char* csrc = static_cast<const unsigned char*>(src);
     __movsb(cdst, csrc, count);
     return dst;
@@ -89,9 +89,9 @@ extern "C" void* memcpy(void* dst, const void* src, size_t count)
 
 extern "C" void* memmove(void* dst, const void* src, size_t count)
 {
-    unsigned char* cdst = static_cast<unsigned char*>(dst);
-    const unsigned char* csrc = static_cast<const unsigned char*>(src);
-    const ptrdiff_t diff = csrc - cdst;
+    auto cdst = static_cast<unsigned char*>(dst);
+    auto csrc = static_cast<const unsigned char*>(src);
+    const auto diff = csrc - cdst;
     if ((diff >= 0) || (diff + count <= 0))
     {
         return memcpy(dst, src, count);
@@ -111,9 +111,9 @@ extern "C" void* memmove(void* dst, const void* src, size_t count)
 
 extern "C" int memcmp(void const* p1, void const* p2, size_t count)
 {
-    const unsigned char* c1 = static_cast<const unsigned char*>(p1);
-    const unsigned char* c2 = static_cast<const unsigned char*>(p2);
-    const unsigned char* const end = c1 + count;
+    auto c1 = static_cast<const unsigned char*>(p1);
+    auto c2 = static_cast<const unsigned char*>(p2);
+    auto const end = c1 + count;
     while (c1 < end)
     {
         int d = *c1++ - *c2++;
@@ -131,8 +131,8 @@ extern "C" int memcmp(void const* p1, void const* p2, size_t count)
 
 extern "C" const void * memchr(const void* buf, int chr,size_t cnt)
 {
-    const unsigned char* ubuf = reinterpret_cast<const unsigned char*>(buf);
-    unsigned char uchr = static_cast<unsigned char>(chr);
+    auto ubuf = reinterpret_cast<const unsigned char*>(buf);
+    auto uchr = static_cast<unsigned char>(chr);
     while (cnt && (*ubuf != uchr))
     {
         ubuf++;

@@ -33,7 +33,7 @@ INT_PTR BaseDlg::DlgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     if (msg != WM_INITDIALOG)
     {
-        BaseDlg* self = i2p<BaseDlg*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+        auto self = i2p<BaseDlg*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
         if (self != nullptr)
         {
             if (msg == WM_COMMAND)
@@ -58,7 +58,7 @@ INT_PTR BaseDlg::DlgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                         };
                     self->m_pParent->SendNotify(&ma.hdr);
                 }
-                const LRESULT res = self->OnMessage(msg, wp, lp);
+                const auto res = self->OnMessage(msg, wp, lp);
                 if (msg == WM_NCDESTROY)
                 {
                     self->m_hWnd = nullptr;
@@ -73,7 +73,7 @@ INT_PTR BaseDlg::DlgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     }
     else
     {
-        BaseDlg* self = i2p<BaseDlg*>(lp);
+        auto self = i2p<BaseDlg*>(lp);
         SetWindowLongPtr(hWnd, GWLP_USERDATA, p2i<LONG_PTR>(self));
         self->m_hWnd = hWnd;
         return self->OnInitDialog();
