@@ -178,7 +178,7 @@ public:
 template <UINT CODE_PAGE>
 class CpFromW : public CharFromW
 {
-    typedef CharFromW base;
+    using base = CharFromW;
 public:
     CpFromW()                   : base(CODE_PAGE, nullptr)  {}
     CpFromW(PCWSTR p_src)       : base(CODE_PAGE, p_src)    {}
@@ -204,7 +204,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef CpFromW<CP_ACP> AFromW;
-typedef CpFromW<CP_UTF8> Utf8FromW;
+using AFromW = CpFromW<CP_ACP>;
+using Utf8FromW = CpFromW<CP_UTF8>;
 
 ////////////////////////////////////////////////////////////////////////////////

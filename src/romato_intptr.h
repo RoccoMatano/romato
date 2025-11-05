@@ -102,7 +102,7 @@ template <class P, class I> P i2p(I i)
 template <class P> P align_ptr(void* ptr)
 {
     static_assert(std::is_pointer<P>::value, "P must be a pointer type");
-    typedef typename std::remove_pointer<P>::type noptr;
+    using noptr = typename std::remove_pointer<P>::type;
     const uintptr_t aligned = align_to_pwr2(
         reinterpret_cast<uintptr_t>(ptr),
         alignof(noptr)
@@ -113,7 +113,7 @@ template <class P> P align_ptr(void* ptr)
 template <class P> P align_ptr(const void* ptr)
 {
     static_assert(std::is_pointer<P>::value, "P must be a pointer type");
-    typedef typename std::remove_pointer<P>::type noptr;
+    using noptr = typename std::remove_pointer<P>::type;
     const uintptr_t aligned = align_to_pwr2(
         reinterpret_cast<uintptr_t>(ptr),
         alignof(noptr)

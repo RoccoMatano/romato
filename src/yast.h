@@ -80,7 +80,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 class Yast;
-typedef cvector<Yast> YastVector;
+using YastVector = cvector<Yast>;
 
 class Yast
 {
@@ -88,7 +88,7 @@ protected:
 
     ////////////////////////////////////////////////////////////////////////////
 
-    typedef WCHAR* YSTR;
+    using YSTR = WCHAR*;
 
     static YSTR allocate_bytes(const void* str, UINT length);
 

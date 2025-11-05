@@ -32,7 +32,7 @@
 
 template <class T> struct CustAll // because it smells like Kuhstall!
 {
-    typedef T value_type;
+    using value_type = T;
 
     CustAll()
     {

@@ -30,7 +30,7 @@
 
 // a list control that accepts dropping files
 
-typedef void (*LIST_CTRL_DROP_FILES_CALLBACK)(void *pCtxt, const Yast& filename);
+using LIST_CTRL_DROP_FILES_CALLBACK = void(*)(void*, const Yast&);
 
 class ListCtrlDropFiles : public ListCtrl
 {
