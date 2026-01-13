@@ -49,12 +49,7 @@ INT_PTR BaseDlg::DlgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
                 if (msg == WM_ACTIVATE && self->m_pParent)
                 {
                     NM_MSD_ACTIVATE ma = {
-                        {
-                            hWnd,
-                            static_cast<UINT_PTR>(GetDlgCtrlID(hWnd)),
-                            MSDN_ACTIVATE
-                            },
-                        wp != WA_INACTIVE
+                        {hWnd, 0, MSDN_ACTIVATE}, wp != WA_INACTIVE
                         };
                     self->m_pParent->SendNotify(&ma.hdr);
                 }

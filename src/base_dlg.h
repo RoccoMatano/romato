@@ -146,8 +146,12 @@ protected:
 
     virtual bool OnNotify(UINT CtrlId, NMHDR *pHdr)
     {
+        if (m_pParent && pHdr->code == MSDN_ACTIVATE)
+        {
+            m_pParent->SendNotify(pHdr);
+            return true;
+        }
         UNREFERENCED_PARAMETER(CtrlId);
-        UNREFERENCED_PARAMETER(pHdr);
         return false;
     }
 
@@ -196,11 +200,7 @@ protected:
     {
         if (m_pParent)
         {
-            NM_MSD_DESTROY md = {
-                m_hWnd,
-                static_cast<UINT_PTR>(GetDlgCtrlID(m_hWnd)),
-                MSDN_DESTROY
-                };
+            NM_MSD_DESTROY md = {m_hWnd, 0, MSDN_DESTROY};
             m_pParent->SendNotify(&md);
         }
         else
